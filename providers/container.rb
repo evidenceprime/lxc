@@ -1,4 +1,5 @@
 def load_current_resource
+
   @lxc = ::Lxc.new(
     new_resource.name,
     :base_dir => node[:lxc][:container_directory],
@@ -27,14 +28,16 @@ action :create do
   _lxc = @lxc # for use inside resources
   stopped_end_state = _lxc.stopped?
 
-  #### Add custom key for host based interactions
-  directory '/opt/hw-lxc-config' do
-    recursive true
-  end
+  if node[:lxc][:use_ssh]
+    #### Add custom key for host based interactions
+    directory '/opt/hw-lxc-config' do
+      recursive true
+    end
 
-  execute 'lxc host_ssh_key' do
-    command "ssh-keygen -P '' -f /opt/hw-lxc-config/id_rsa"
-    creates '/opt/hw-lxc-config/id_rsa'
+    execute 'lxc host_ssh_key' do
+      command "ssh-keygen -P '' -f /opt/hw-lxc-config/id_rsa"
+      creates '/opt/hw-lxc-config/id_rsa'
+    end
   end
 
   #### Create container
@@ -118,14 +121,16 @@ action :create do
     end
   end
 
-  #### Ensure host has ssh access into container
-  directory @lxc.rootfs.join('root/.ssh').to_path
+  if node[:lxc][:use_ssh]
+    #### Ensure host has ssh access into container
+    directory @lxc.rootfs.join('root/.ssh').to_path
 
-  template @lxc.rootfs.join('root/.ssh/authorized_keys').to_path do
-    source 'file_content.erb'
-    cookbook 'lxc'
-    mode 0600
-    variables(:path => '/opt/hw-lxc-config/id_rsa.pub')
+    template @lxc.rootfs.join('root/.ssh/authorized_keys').to_path do
+      source 'file_content.erb'
+      cookbook 'lxc'
+      mode 0600
+      variables(:path => '/opt/hw-lxc-config/id_rsa.pub')
+    end
   end
 
   #### Use cached chef package from host if available

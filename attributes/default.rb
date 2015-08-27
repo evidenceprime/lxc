@@ -12,10 +12,11 @@ default[:lxc][:shutdown_timeout] = 120
 default[:lxc][:allowed_types] = %w(debian ubuntu fedora centos)
 default[:lxc][:container_directory] = '/var/lib/lxc'
 default[:lxc][:dnsmasq_lease_file] = '/var/lib/misc/dnsmasq.leases'
+default[:lxc][:use_ssh] = true
 
 default[:lxc][:proxy][:enable] = false
 
-default[:lxc][:elecksee][:version_restriction] = '~> 1.0.20'
+default[:lxc][:elecksee][:version_restriction] = '~> 1.1.8'
 default[:lxc][:elecksee][:action] = :install
 
 default[:lxc][:default_config][:lxc_auto] = node[:lxc][:auto_start]

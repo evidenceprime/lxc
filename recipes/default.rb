@@ -64,6 +64,12 @@ end
 
 include_recipe 'lxc::service'
 
+# install packages for elecksee compilation
+%w(gcc libffi-dev).each do |pkg|
+  package pkg
+  resources(:package => pkg).run_action(:install)
+end
+
 chef_gem 'elecksee' do
   if(node[:lxc][:elecksee][:version_restriction])
     version node[:lxc][:elecksee][:version_restriction]
@@ -80,3 +86,6 @@ file '/etc/apparmor.d/lxc/lxc-with-nesting' do
 end
 
 require 'elecksee/lxc'
+unless node[:lxc][:use_ssh]
+  ::Lxc.container_command_via = :lxc_attach
+end
