@@ -32,6 +32,7 @@ default[:lxc][:default_config][:mirror] = node[:lxc][:mirror] || 'http://archive
 default[:lxc][:knife] = {}
 default[:lxc][:knife][:static_range] = ''
 default[:lxc][:knife][:static_ips] = []
+default[:lxc][:chef_client_version] = '12.4.1'
 
 default[:lxc][:user_locks] = %w(ubuntu)
 

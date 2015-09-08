@@ -230,7 +230,7 @@ action :create do
     block do
       new_resource.initialize_commands.each do |cmd|
         Chef::Log.info "Running command on #{new_resource.name}: #{cmd}"
-        _lxc.container_command(cmd, 5)
+        _lxc.container_command("-- #{cmd}", 5)
       end
     end
     only_if do
@@ -251,7 +251,7 @@ action :create do
 
   ruby_block "lxc install_chef[#{new_resource.name}]" do
     block do
-      _lxc.container_command('bash /opt/chef-install.sh')
+      _lxc.container_command("-- bash /opt/chef-install.sh -v #{node[:lxc][:chef_client_version]}")
     end
     action :create
     only_if do
@@ -318,7 +318,7 @@ action :create do
     block do
       cmd = 'chef-client -K /etc/chef/validator.pem -c /etc/chef/client.rb -j /etc/chef/first_run.json'
       Chef::Log.info "Running command on #{new_resource.name}: #{cmd}"
-      _lxc.container_command(cmd, new_resource.chef_retries)
+      _lxc.container_command("-- #{cmd}", new_resource.chef_retries)
     end
     only_if do
       new_resource.chef_enabled &&
@@ -331,7 +331,7 @@ action :create do
   ruby_block "lxc container_commands[#{new_resource.name}]" do
     block do
       new_resource.container_commands.each do |cmd|
-        _lxc.container_command(cmd, 2)
+        _lxc.container_command("-- #{cmd}", 2)
       end
     end
     not_if do

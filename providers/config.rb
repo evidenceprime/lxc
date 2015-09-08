@@ -14,7 +14,11 @@ def load_current_resource
 
   new_resource.rootfs @lxc.rootfs.to_path unless new_resource.rootfs
   new_resource.default_bridge node[:lxc][:bridge] unless new_resource.default_bridge
-  new_resource.mount @lxc.path.join('fstab').to_path unless new_resource.mount
+
+  if not new_resource.mount and node.run_state[:lxc][:fstabs] and
+        node.run_state[:lxc][:fstabs][new_resource.name]
+    new_resource.mount @lxc.path.join('fstab').to_path
+  end
   config = ::Lxc::FileConfig.new(@lxc.container_config)
   if((new_resource.network.nil? || new_resource.network.empty?))
     if(config.network.empty?)
@@ -37,6 +41,7 @@ def load_current_resource
       end
     end
   end
+
   new_resource.cgroup(
     Chef::Mixin::DeepMerge.merge(
       Mash.new(
