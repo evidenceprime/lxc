@@ -1,10 +1,10 @@
 name             'lxc'
-maintainer       'Chris Roberts'
-maintainer_email 'chris@hw-ops.com'
+maintainer       'Artur Nowak'
+maintainer_email 'artur.nowak@evidenceprime.com'
 license          'Apache 2.0'
 description      'Chef driven Linux Containers'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '2.1.1'
+version          '2.2.0'
 
 suggests 'omnibus_updater'
 suggests 'bridger'
